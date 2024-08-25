@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
 <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -30,12 +31,25 @@ td {font-size: 14px; border: 1px solid #000;}
   height: 94px;
   padding: 3px;
 }
-.recognitionResultText {
-  font-size: 24px;
+
+.recognitionResultText{
+  font-family: 'M PLUS Rounded 1c', sans-serif; /* フォントを設定 */
+  font-size: 30px;
+  color: white; /* 文字の色を黒に設定 */
+  -webkit-text-stroke-width: 2px; /* 初期の縁取りの太さを設定 */
+  -webkit-text-stroke-color: rgb(42, 83, 196);
+  font-weight: 600; /* 初期の文字の太さ */
 }
+
 .translationResultText {
-  font-size: 24px;
+  font-family: 'M PLUS Rounded 1c', sans-serif; /* フォントを設定 */
+  font-size: 30px;
+  color: white; /* 文字の色を黒に設定 */
+  -webkit-text-stroke-width: 1px; /* 初期の縁取りの太さを設定 */
+  -webkit-text-stroke-color: black;
+  font-weight: 600; /* 初期の文字の太さ */
 }
+
 .recognitionResultInfo {
   font-size: 15px;
   color: lightgrey;
@@ -59,27 +73,8 @@ td {font-size: 14px; border: 1px solid #000;}
 }
 </style>
 </head>
-<body lang="ja">
-<form>
 <table border="0" width="100%" cellspacing="3" cellpadding="0">
- <tr><td width="270">&nbsp;ワンタイムAppKey発行API URL</td><td><input type="text" class="text" id="issuerURL" spellcheck="false" tabindex="1"></td></tr>
- <tr><td>&nbsp;サービス ID</td><td><input type="text" class="text" id="sid" spellcheck="false" tabindex="1"></td></tr>
- <tr><td>&nbsp;サービスパスワード</td><td><input type="password" class="text" id="spw" spellcheck="false" autocomplete="on" tabindex="1"></td></tr>
- <tr class="issue_options" style="display:none;"><td>&nbsp;有効期限</td><td><input type="text" class="text" id="epi" spellcheck="false" tabindex="1"></td></tr>
- <tr>
-  <td>
-   <input type="button" value="サービス認証キーの取得" class="text" id="issueButton" tabindex="2">
-  </td>
-  <td>
-   &nbsp;
-  </td>
- </tr>
-</table>
-</form>
-<div style="margin: 20px 2px;">
- 「サービス ID」「サービスパスワード」を入力した後に <b>[サービス認証キーの取得]</b> ボタンを押して、「サービス認証キー」を取得してください<span class="toggle_issue_options">。</span>
-</div>
-<table border="0" width="100%" cellspacing="3" cellpadding="0">
+<tr><td width="270">&nbsp;ワンタイムAppKey発行API URL</td><td><input type="text" class="text" id="issuerURL" spellcheck="false" tabindex="1"></td></tr>
  <tr><td width="270">&nbsp;サーバ URL</td><td><input type="text" class="text" id="serverURL" spellcheck="false" tabindex="3"></td></tr>
  <tr><td>&nbsp;接続エンジン名</td><td><input type="text" class="text grammarFileNames" spellcheck="false" tabindex="3"></td></tr>
  <tr><td>&nbsp;プロファイル ID</td><td><input type="text" class="text" id="profileId" spellcheck="false" tabindex="3"></td></tr>
@@ -88,8 +83,8 @@ td {font-size: 14px; border: 1px solid #000;}
  <tr class="options" style="display:none;"><td>&nbsp;フィラー単語を保持するかどうか</td><td><input type="text" class="text" id="keepFillerToken" spellcheck="false" tabindex="3"></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;認識中イベント発行間隔 (単位：ミリ秒)</td><td><input type="text" class="text" id="resultUpdatedInterval" spellcheck="false" tabindex="3"></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;拡張情報</td><td><input type="text" class="text" id="extension" spellcheck="false" tabindex="3"></td></tr>
- <tr><td>&nbsp;APPKEY</td><td><input type="text" class="text" id="authorization" spellcheck="false" tabindex="3"></td></tr>
- <tr><td>&nbsp;GoogleAPIKEY</td><td><input type="text" class="text" id="googleapikey" spellcheck="false" tabindex="3"></td></tr>
+ <tr><td>&nbsp;APPKEY</td><td><input type="password" class="text" id="authorization" spellcheck="false" tabindex="3"></td></tr>
+ <tr><td>&nbsp;GoogleAPIKEY</td><td><input type="password" class="text" id="googleapikey" spellcheck="false" tabindex="3"></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;<font color="silver">音声データ形式</font></td><td><input type="text" class="text" id="codec" spellcheck="false" tabindex="3" readonly></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;認識結果タイプ</td><td><input type="text" class="text" id="resultType" spellcheck="false" tabindex="3"></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;無発話許容時間 (単位：ミリ秒)</td><td><input type="text" class="text" id="checkIntervalTime" spellcheck="false" tabindex="3"></td></tr>
@@ -101,28 +96,216 @@ td {font-size: 14px; border: 1px solid #000;}
    <td>
      <button class="text" id="resumePauseButton" tabindex="5">録音の開始</button>
    </td>
-   <td class="recognitionResult">
-     <div>
+   <td class="recognitionResult" style="background-color: #00FF00;">
+     <div style="text-align: center;">
        <span class="recognitionResultText"></span>
-       <span class="recognitionResultInfo"></span>
      </div>
-     <div>
+     <div style="text-align: center;">
        <span class="translationResultText"></span>
      </div>
    </td>
  </tr>
+ <tr class="recognitionResultInfo"></tr>
 </table>
+
+
 <div style="margin: 20px 2px 24px 2px;">
  <b>[録音の開始]</b> ボタンを押して、マイクに向かって話してください。 <img src="data:image/gif;base64,R0lGODlhCgAPAMIAAAAAABYWFqqqqufn5////wAAAAAAAAAAACH5BAEKAAcALAAAAAAKAA8AAAMmSLq8E2E0AiqY9raMba/MxWmiRw4ZqgACdQka3BLyAltzqDF3NScAOw==" alt="" width="10" height="15"> マイクの使用や共有などを求められた場合は、「許可」 ボタンまたは 「共有」 ボタンを押してください<span class="toggle_options">。</span>
 </div>
 <div style="margin: 20px 2px 24px 2px;color: red;">
- <b>注意事項</b><br>
- このサンプルはJavaScriptのAPI「AudioWorklet」を使用しておりますため、直接ファイルをブラウザで開いた「file://」ではAPIの制限によって動作しません。<br>
- Webサーバーに配置して「https://」または「http://localhost」で動作させる必要があります。<br>
- 「file://」で動作させたい場合は、「DEPRECATED」フォルダにあるものを使用してください。<br>
- 「DEPRECATED」フォルダにあるものは、JavaScriptの非推奨になったAPI「ScriptProcessorNode」を使用しており、今後使用できなくなる可能性があります。<br>
- また、今後「ScriptProcessorNode」を使用したサンプルプログラムは更新されません。
+ <b>使い方</b><br>
+ 利用するには、AmiVoiceのAPIキーとgoogleのGASのURLが必要です。
+ APPKEY・プロファイル ID・GoogleAPIKEYの３つを入力してください。
 </div>
+<!-- スライダー、色選択、フォント選択を追加 -->
+
+<div class="control-group">
+  <div class="control-group">
+  <div class="header" style="margin: 20px 2px 24px 2px;">
+      　　　　サイズ　　　　　　　　　　ウェイト　　　　　　　　縁取り<BR>
+  </div>
+  <div class="slider-container" style="display: flex; align-items: center;">
+      <label>認識:</label>
+      <input type="range" id="fontSizeSlider1" min="10" max="50" value="20" oninput="updateFontSize(1)">
+      <span id="fontSizeValue1" style="margin-right: 20px;">30px</span>
+
+      <input type="range" id="fontWeightSlider1" min="300" max="900" value="400" step="100" oninput="updateFontWeight(1)">
+      <span id="fontWeightValue1" style="margin-right: 20px;">600</span>
+
+      <input type="range" id="fontStrokeSlider1" min="0" max="5" value="2" step="0.5" oninput="updateFontStroke(1)">
+      <span id="fontStrokeValue1">2px</span>
+  </div>
+  <label>認識文字の色:</label>
+  <input type="color" id="fontColorPicker1" value="#FFFFFF" onchange="updateFontColor(1)">
+  <label for="fontStrokeColorPicker1">認識文字の縁の色:</label>
+  <input type="color" id="fontStrokeColorPicker1" value="#2A53C4" onchange="updateFontStrokeColor(1)">
+</div>
+
+<div style="margin: 20px 2px 24px 2px;">
+  <div class="slider-container" style="display: flex; align-items: center;">
+      <label>翻訳:</label>
+      <input type="range" id="fontSizeSlider2" min="10" max="50" value="20" oninput="updateFontSize(2)">
+      <span id="fontSizeValue2" style="margin-right: 20px;">30px</span>
+
+      <input type="range" id="fontWeightSlider2" min="300" max="900" value="400" step="100" oninput="updateFontWeight(2)">
+      <span id="fontWeightValue2" style="margin-right: 20px;">600</span>
+
+      <input type="range" id="fontStrokeSlider2" min="0" max="5" value="1" step="0.5"  oninput="updateFontStroke(2)">
+      <span id="fontStrokeValue2">1px</span>
+  </div>
+  <label>翻訳文字の色:</label>
+<input type="color" id="fontColorPicker2" value="#FFFFFF" onchange="updateFontColor(2)">
+<label for="fontStrokeColorPicker2">認識文字の縁の色:</label>
+<input type="color" id="fontStrokeColorPicker2" value="#000000" onchange="updateFontStrokeColor(2)">
+</div>
+
+<div style="margin: 20px 2px 24px 2px;">
+  <label for="fontSelector">フォントの指定:</label>
+  <select id="fontSelector" onchange="updateFontFamily()">
+    <option value="'M PLUS Rounded 1c', sans-serif">M PLUS Rounded 1c</option>
+    <option value="Arial">Arial</option>
+    <option value="Verdana">Verdana</option>
+    <option value="Times New Roman">Times New Roman</option>
+    <option value="Courier New">Courier New</option>
+    <option value="Georgia">Georgia</option>
+  </select>
+</div>
+
+<script type="text/javascript">
+function updateFontSize(target) {
+  const slider1 = document.getElementById('fontSizeSlider1');
+  const sizeValue1 = document.getElementById('fontSizeValue1');
+  const slider2 = document.getElementById('fontSizeSlider2');
+  const sizeValue2 = document.getElementById('fontSizeValue2');
+  const recognitionText = document.querySelector('.recognitionResultText');
+  const translationText = document.querySelector('.translationResultText');
+
+  if (target === 1) {
+    sizeValue1.innerText = slider1.value + 'px';
+    recognitionText.style.fontSize = slider1.value + 'px';
+  } else if (target === 2) {
+    sizeValue2.innerText = slider2.value + 'px';
+    translationText.style.fontSize = slider2.value + 'px';
+  }
+}
+
+  function updateFontColor(target) {
+    const colorPicker1 = document.getElementById('fontColorPicker1');
+    const colorPicker2 = document.getElementById('fontColorPicker2');
+    const recognitionText = document.querySelector('.recognitionResultText');
+    const translationText = document.querySelector('.translationResultText');
+
+    if (target === 1) {
+      recognitionText.style.color = colorPicker1.value;
+    } else if (target === 2) {
+      translationText.style.color = colorPicker2.value;
+    }
+  }
+
+  function updateFontSize(target) {
+  const slider1 = document.getElementById('fontSizeSlider1');
+  const sizeValue1 = document.getElementById('fontSizeValue1');
+  const slider2 = document.getElementById('fontSizeSlider2');
+  const sizeValue2 = document.getElementById('fontSizeValue2');
+  const recognitionText = document.querySelector('.recognitionResultText');
+  const translationText = document.querySelector('.translationResultText');
+
+  if (target === 1) {
+    sizeValue1.innerText = slider1.value + 'px';
+    recognitionText.style.fontSize = slider1.value + 'px';
+  } else if (target === 2) {
+    sizeValue2.innerText = slider2.value + 'px';
+    translationText.style.fontSize = slider2.value + 'px';
+  }
+}
+
+//追加ウェイト
+
+function updateFontWeight(target) {
+  const slider1 = document.getElementById('fontWeightSlider1');
+  const valueDisplay1 = document.getElementById('fontWeightValue1');
+  const slider2 = document.getElementById('fontWeightSlider2');
+  const valueDisplay2 = document.getElementById('fontWeightValue2');
+  const recognitionText = document.querySelector('.recognitionResultText');
+  const translationText = document.querySelector('.translationResultText');
+
+  if (target === 1) {
+    valueDisplay1.innerText = slider1.value;
+    recognitionText.style.fontWeight = slider1.value;
+  } else if (target === 2) {
+    valueDisplay2.innerText = slider2.value;
+    translationText.style.fontWeight = slider2.value;
+  }
+}
+
+//追加枠
+
+function setTextBorder(width, id) {
+    const recognitionText = document.querySelector('.recognitionResultText');
+    if (id === 1) {
+        recognitionText.style.webkitTextStrokeWidth = width + 'px';
+    }
+}
+
+function updateFontStroke(target) {
+  const slider1 = document.getElementById('fontStrokeSlider1');
+  const strokeValue1 = document.getElementById('fontStrokeValue1');
+  const slider2 = document.getElementById('fontStrokeSlider2');
+  const strokeValue2 = document.getElementById('fontStrokeValue2');
+  const recognitionText = document.querySelector('.recognitionResultText');
+  const translationText = document.querySelector('.translationResultText');
+
+  if (target === 1) {
+    strokeValue1.innerText = slider1.value + 'px';
+    recognitionText.style.webkitTextStrokeWidth = slider1.value + 'px';
+  } else if (target === 2) {
+    strokeValue2.innerText = slider2.value + 'px';
+    translationText.style.webkitTextStrokeWidth = slider2.value + 'px';
+  }
+}
+
+function updateFontStrokeColor(target) {
+  const colorPicker1 = document.getElementById('fontStrokeColorPicker1');
+  const colorPicker2 = document.getElementById('fontStrokeColorPicker2');
+  const recognitionText = document.querySelector('.recognitionResultText');
+  const translationText = document.querySelector('.translationResultText');
+
+  if (target === 1) {
+    recognitionText.style.webkitTextStrokeColor = colorPicker1.value;
+  } else if (target === 2) {
+    translationText.style.webkitTextStrokeColor = colorPicker2.value;
+  }
+}
+//追加縁枠変更
+function updateTextStroke() {
+        const slider = document.getElementById('textStrokeSlider');
+        const value = slider.value;
+        const valueDisplay = document.getElementById('textStrokeValue');
+        const recognitionText = document.querySelector('.recognitionResultText');
+
+        valueDisplay.textContent = value + 'px';
+        recognitionText.style.webkitTextStrokeWidth = value + 'px'; // 縁取りの太さを更新
+    }
+
+function updateFontFamily() {
+  const fontSelector = document.getElementById('fontSelector');
+  const recognitionText = document.querySelector('.recognitionResultText');
+  const translationText = document.querySelector('.translationResultText');
+
+  recognitionText.style.fontFamily = fontSelector.value;
+  translationText.style.fontFamily = fontSelector.value;
+}
+
+  function updateFontFamily() {
+    const fontSelector = document.getElementById('fontSelector');
+    const recognitionText = document.querySelector('.recognitionResultText');
+    const translationText = document.querySelector('.translationResultText');
+
+    recognitionText.style.fontFamily = fontSelector.value;
+    translationText.style.fontFamily = fontSelector.value;
+  }
+</script>
+
 <div class="bar"><hr><div id="version"></div></div>
 <div id="messages"></div>
 <script type="text/javascript">
@@ -185,6 +368,9 @@ td {font-size: 14px; border: 1px solid #000;}
 
   // 音声認識サーバへの音声データの供給開始処理が開始した時に呼び出されます。
   function feedDataResumeStarted() {
+    this.recognitionResultText.innerHTML = "音声入力を開始します";
+    this.translationResultText.innerHTML = "翻訳入力を開始します";
+
     // log_(this.name, "EVENT: feedDataResumeStarted()");
   }
 
@@ -245,7 +431,7 @@ td {font-size: 14px; border: 1px solid #000;}
     var rt = ((duration > 0) ? (elapsedTime / duration).toFixed(2) : "-") + " (" + (elapsedTime / 1000).toFixed(2) + "/" + ((duration > 0) ? (duration / 1000).toFixed(2) : "-") + ")";
     var cf = (confidence >= 0.0) ? confidence.toFixed(2) : "-";
     this.recognitionResultText.innerHTML = text;
-    this.recognitionResultInfo.innerHTML = "RT: " + rt + "<br>CF: " + cf;
+    this.recognitionResultInfo.innerHTML = "";
     log_(this.name, text + " <font color=\"darkgray\">(RT: " + rt + ") (CF: " + cf + ")</font>");
     //ここで翻訳処理を行い、logで表示する処理を記述する。
     // const text = document.getElementById('text').value;
@@ -268,7 +454,7 @@ td {font-size: 14px; border: 1px solid #000;}
       })
       .catch(error => {
         console.error('Error:', error);
-        log_(this.name, 'エラーが発生しました。');
+        log_(this.name, '翻訳にエラーが発生しました。GoogleAPIKEYを確認してください。');
       });
 
   }
