@@ -20,8 +20,8 @@ var Recorder = function() {
 		version: "Recorder/1.0.08",
 		sampleRate: 16000,
 		sampleRateElement: undefined,
-		maxRecordingTime: 180000, // 3分（180,000ミリ秒）に設定
-    maxRecordingTimeElement: 180000, // 3分（180,000ミリ秒）に設定
+		maxRecordingTime: 4800000, // 3分（180,000ミリ秒）に設定
+    maxRecordingTimeElement: 4800000, // 3分（180,000ミリ秒）に設定
 		downSampling: false,
 		downSamplingElement: undefined,
 		adpcmPacking: false,

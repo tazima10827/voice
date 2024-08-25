@@ -407,7 +407,6 @@ function updateFontFamily() {
   function resultCreated() {
     // log_(this.name, "EVENT: resultCreated()");
     this.recognitionResultText.innerHTML = "...";
-    this.translationResultText.innerHTML = "...";
     this.recognitionResultInfo.innerHTML = "";
     this.startTime = new Date().getTime();
   }
@@ -424,7 +423,7 @@ function updateFontFamily() {
   function resultFinalized(result) {
     // log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
     result = Result.parse(result);
-    var text = (result.text) ? sanitize_(result.text) : (result.code != 'o' && result.message) ? "<font color=\"gray\">(" + result.message + ")</font>" : "<font color=\"gray\">(なし)</font>";
+    var text = (result.text) ? sanitize_(result.text) : (result.code != 'o' && result.message) ? "<font color=\"gray\">(" + result.message + ")</font>" : "<font color=\"gray\">()</font>";
     var duration = result.duration;
     var elapsedTime = new Date().getTime() - this.startTime;
     var confidence = result.confidence;
@@ -574,7 +573,7 @@ function updateFontFamily() {
 
   var issue_options = document.querySelectorAll(".issue_options");
   function toggle_issue_options() {
-    issue_options[0].style.display = (issue_options[0].style.display === "") ? "none" : "";
+    issue_options[0].style.display = (issue_options[0].style.display === "") ? "" : "";
     for (var i = 1; i < issue_options.length; i++) {
       issue_options[i].style.display = issue_options[0].style.display;
     }
@@ -587,7 +586,7 @@ function updateFontFamily() {
 
   var options = document.querySelectorAll(".options");
   function toggle_options() {
-    options[0].style.display = (options[0].style.display === "") ? "none" : "";
+    options[0].style.display = (options[0].style.display === "") ? "" : "";
     for (var i = 1; i < options.length; i++) {
       options[i].style.display = options[0].style.display;
     }
