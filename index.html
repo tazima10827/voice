@@ -429,6 +429,7 @@ function updateFontFamily() {
     // this.translationResultText.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     this.recognitionResultText.innerHTML = "";
     this.translationResultText.innerHTML = "";
+    document.querySelector('.recognitionResultText').style.display = 'none';
 
     // log_(this.name, "EVENT: feedDataResumeStarted()");
   }
@@ -441,7 +442,7 @@ function updateFontFamily() {
     resumePauseButton.disabled = false;
     resumePauseButton.classList.add("sending");
 
-    document.querySelector('.recognitionResultText').style.display = 'block';
+    document.querySelector('.recognitionResultText').style.display = 'none';
     document.querySelector('.translationResultText').style.display = 'block';
   }
 
