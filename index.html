@@ -549,7 +549,11 @@ function updateFontFamily() {
   function resultFinalized(result) {
     // log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
     result = Result.parse(result);
-    var text = (result.text) ? sanitize_(result.text) : (result.code != 'o' && result.message) ? "<font color=\"gray\">(" + result.message + ")</font>" : "<font color=\"gray\">()</font>";
+    if (!result.text) {
+        log_(this.name, "テキストなしのため処理をスキップ");
+        return;
+    }
+    var text = (result.text) ? sanitize_(result.text) : (result.code != 'o' && result.message) ? "<font color=\"gray\">(" + result.message + ")</font>" : "<font color=\"gray\">...</font>";
     var duration = result.duration;
     var elapsedTime = new Date().getTime() - this.startTime;
     var confidence = result.confidence;
