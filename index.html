@@ -2,6 +2,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
 <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -28,25 +29,34 @@ td {font-size: 14px; border: 1px solid #000;}
   cursor: pointer;
 }
 .recognitionResult {
-  height: 94px;
-  padding: 3px;
+  background-color: #00FF00;
+  height: 300px;
+  display: flex; /* 子要素の配置を制御するためにFlexboxを使用 */
+  flex-direction: column; /* 子要素を縦方向に並べる */
+  justify-content: flex-end; /* 子要素を下部に配置 */
+  padding-bottom: 30px; /* 必要に応じて下部の余白を調整 */
+}
+
+.recognitionResult div {
+  text-align: center;
+  padding: 0 50px; /* 左右に余白を追加 */
 }
 
 .recognitionResultText{
-  font-family: 'M PLUS Rounded 1c', sans-serif; /* フォントを設定 */
-  font-size: 30px;
+  font-family: 'Zen Maru Gothic', sans-serif; /* フォントを設定 */
+  font-size: 26px;
   color: white; /* 文字の色を黒に設定 */
-  -webkit-text-stroke-width: 2px; /* 初期の縁取りの太さを設定 */
-  -webkit-text-stroke-color: rgb(42, 83, 196);
+  -webkit-text-stroke-width: 1px; /* 初期の縁取りの太さを設定 */
+  -webkit-text-stroke-color: rgb(61, 61, 61);
   font-weight: 600; /* 初期の文字の太さ */
 }
 
 .translationResultText {
-  font-family: 'M PLUS Rounded 1c', sans-serif; /* フォントを設定 */
-  font-size: 30px;
-  color: white; /* 文字の色を黒に設定 */
-  -webkit-text-stroke-width: 1px; /* 初期の縁取りの太さを設定 */
-  -webkit-text-stroke-color: black;
+  font-family: 'Zen Maru Gothic', sans-serif; /* フォントを設定 */
+  font-size: 32px;
+  color: rgb(47, 9, 236); /* 文字の色を黒に設定 */
+  -webkit-text-stroke-width: 0px; /* 初期の縁取りの太さを設定 */
+  -webkit-text-stroke-color:rgb(57, 107, 231);
   font-weight: 600; /* 初期の文字の太さ */
 }
 
@@ -65,6 +75,29 @@ td {font-size: 14px; border: 1px solid #000;}
 .bar {
   position: relative;
 }
+.stroke-single-imb {
+    left: 0;
+    right: 0;
+    margin: 0;
+    /* -webkit-text-stroke: 0px #0000FF;  */
+}
+
+.stroke-single-bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    /* -webkit-text-stroke: 3px #FF0000;  */
+}
+
+.stroke-single-fg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    /* -webkit-text-stroke: 0px #FFFFFF; */
+}
+
 #version {
   font-size: 10px;
   position: absolute;
@@ -92,22 +125,27 @@ td {font-size: 14px; border: 1px solid #000;}
  <tr class="options" style="display:none;"><td>&nbsp;連続録音可能時間 (単位: ミリ秒)</td><td><input type="text" class="text" id="maxRecordingTime" spellcheck="false" tabindex="3"></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;ダウンサンプリング</td><td><input type="checkbox" class="checkbox" id="downSampling" tabindex="3"></td></tr>
  <tr class="options" style="display:none;"><td>&nbsp;ADPCM 圧縮</td><td><input type="checkbox" class="checkbox" id="adpcmPacking" tabindex="3"></td></tr>
- <tr>
-   <td>
-     <button class="text" id="resumePauseButton" tabindex="5">録音の開始</button>
-   </td>
-   <td class="recognitionResult" style="background-color: #00FF00;">
-     <div style="text-align: center;">
-       <span class="recognitionResultText"></span>
-     </div>
-     <div style="text-align: center;">
-       <span class="translationResultText"></span>
-     </div>
-   </td>
- </tr>
- <tr class="recognitionResultInfo"></tr>
 </table>
-
+<table border="0" width="100%" cellspacing="3" cellpadding="0">
+<tr>
+  <td>
+    <button class="text" id="resumePauseButton" tabindex="5" style="height: 30px;">録音の開始</button>
+  </td>
+</tr>
+</table>
+<table border="0" width="100%" cellspacing="3" cellpadding="0">
+  <tr>
+     <td class="recognitionResult" style="background-color: #00FF00; height: 300px; display: flex; flex-direction: column; justify-content: flex-end;">
+       <div style="text-align: center; padding: 0 20px; margin-bottom: -2.5px;"> <!-- 下の余白を少なく設定 -->
+         <span class="recognitionResultText" style="display: none;">認識結果のテキスト</span>
+       </div>
+       <div style="text-align: center; padding: 0 20px; margin-top: -2.5px;"> <!-- 上の余白を少なく設定 -->
+         <span class="translationResultText">翻訳結果のテキスト</span>
+       </div>
+     </td>
+  </tr>
+<tr class="recognitionResultInfo"></tr>
+</table>
 
 <div style="margin: 20px 2px 24px 2px;">
  <b>[録音の開始]</b> ボタンを押して、マイクに向かって話してください。 <img src="data:image/gif;base64,R0lGODlhCgAPAMIAAAAAABYWFqqqqufn5////wAAAAAAAAAAACH5BAEKAAcALAAAAAAKAA8AAAMmSLq8E2E0AiqY9raMba/MxWmiRw4ZqgACdQka3BLyAltzqDF3NScAOw==" alt="" width="10" height="15"> マイクの使用や共有などを求められた場合は、「許可」 ボタンまたは 「共有」 ボタンを押してください<span class="toggle_options">。</span>
@@ -119,6 +157,11 @@ td {font-size: 14px; border: 1px solid #000;}
 </div>
 <!-- スライダー、色選択、フォント選択を追加 -->
 
+<div style="margin: 20px 2px 24px 2px;">
+  <button id="toggleRecognitionText" style="padding: 10px 20px;">日本語字幕をONにする</button>
+</div>
+
+
 <div class="control-group">
   <div class="control-group">
   <div class="header" style="margin: 20px 2px 24px 2px;">
@@ -126,42 +169,43 @@ td {font-size: 14px; border: 1px solid #000;}
   </div>
   <div class="slider-container" style="display: flex; align-items: center;">
       <label>認識:</label>
-      <input type="range" id="fontSizeSlider1" min="10" max="50" value="20" oninput="updateFontSize(1)">
-      <span id="fontSizeValue1" style="margin-right: 20px;">30px</span>
+      <input type="range" id="fontSizeSlider1" min="10" max="50" value="26" oninput="updateFontSize(1)">
+      <span id="fontSizeValue1" style="margin-right: 20px;">26px</span>
 
-      <input type="range" id="fontWeightSlider1" min="300" max="900" value="400" step="100" oninput="updateFontWeight(1)">
+      <input type="range" id="fontWeightSlider1" min="300" max="900" value="600" step="100" oninput="updateFontWeight(1)">
       <span id="fontWeightValue1" style="margin-right: 20px;">600</span>
 
-      <input type="range" id="fontStrokeSlider1" min="0" max="5" value="2" step="0.5" oninput="updateFontStroke(1)">
-      <span id="fontStrokeValue1">2px</span>
+      <input type="range" id="fontStrokeSlider1" min="0" max="5" value="1" step="0.5" oninput="updateFontStroke(1)">
+      <span id="fontStrokeValue1">1px</span>
   </div>
   <label>認識文字の色:</label>
   <input type="color" id="fontColorPicker1" value="#FFFFFF" onchange="updateFontColor(1)">
   <label for="fontStrokeColorPicker1">認識文字の縁の色:</label>
-  <input type="color" id="fontStrokeColorPicker1" value="#2A53C4" onchange="updateFontStrokeColor(1)">
+  <input type="color" id="fontStrokeColorPicker1" value="#3D3D3D" onchange="updateFontStrokeColor(1)">
 </div>
 
 <div style="margin: 20px 2px 24px 2px;">
   <div class="slider-container" style="display: flex; align-items: center;">
       <label>翻訳:</label>
-      <input type="range" id="fontSizeSlider2" min="10" max="50" value="20" oninput="updateFontSize(2)">
-      <span id="fontSizeValue2" style="margin-right: 20px;">30px</span>
+      <input type="range" id="fontSizeSlider2" min="10" max="50" value="32" oninput="updateFontSize(2)">
+      <span id="fontSizeValue2" style="margin-right: 20px;">32px</span>
 
-      <input type="range" id="fontWeightSlider2" min="300" max="900" value="400" step="100" oninput="updateFontWeight(2)">
+      <input type="range" id="fontWeightSlider2" min="300" max="900" value="600" step="100" oninput="updateFontWeight(2)">
       <span id="fontWeightValue2" style="margin-right: 20px;">600</span>
 
-      <input type="range" id="fontStrokeSlider2" min="0" max="5" value="1" step="0.5"  oninput="updateFontStroke(2)">
-      <span id="fontStrokeValue2">1px</span>
+      <input type="range" id="fontStrokeSlider2" min="0" max="5" value="0" step="0.5"  oninput="updateFontStroke(2)">
+      <span id="fontStrokeValue2">0px</span>
   </div>
   <label>翻訳文字の色:</label>
-<input type="color" id="fontColorPicker2" value="#FFFFFF" onchange="updateFontColor(2)">
+<input type="color" id="fontColorPicker2" value="#2f09ec" onchange="updateFontColor(2)">
 <label for="fontStrokeColorPicker2">認識文字の縁の色:</label>
-<input type="color" id="fontStrokeColorPicker2" value="#000000" onchange="updateFontStrokeColor(2)">
+<input type="color" id="fontStrokeColorPicker2" value="#396BE7" onchange="updateFontStrokeColor(2)">
 </div>
 
 <div style="margin: 20px 2px 24px 2px;">
   <label for="fontSelector">フォントの指定:</label>
   <select id="fontSelector" onchange="updateFontFamily()">
+    <option value="Zen Maru Gothic">Zen Maru Gothic</option>
     <option value="'M PLUS Rounded 1c', sans-serif">M PLUS Rounded 1c</option>
     <option value="Arial">Arial</option>
     <option value="Verdana">Verdana</option>
@@ -172,6 +216,19 @@ td {font-size: 14px; border: 1px solid #000;}
 </div>
 
 <script type="text/javascript">
+
+document.getElementById('toggleRecognitionText').addEventListener('click', function() {
+    const recognitionText = document.querySelector('.recognitionResultText');
+    const button = document.getElementById('toggleRecognitionText');
+    if (recognitionText.style.display === 'none') {
+        recognitionText.style.display = 'block';
+        button.textContent = '日本語字幕をOFFにする'; // ボタンテキストをOFFに変更
+    } else {
+        recognitionText.style.display = 'none';
+        button.textContent = '日本語字幕をONにする'; // ボタンテキストをONに変更
+    }
+});
+
 function updateFontSize(target) {
   const slider1 = document.getElementById('fontSizeSlider1');
   const sizeValue1 = document.getElementById('fontSizeValue1');
@@ -285,7 +342,7 @@ function updateTextStroke() {
 
         valueDisplay.textContent = value + 'px';
         recognitionText.style.webkitTextStrokeWidth = value + 'px'; // 縁取りの太さを更新
-    }
+}
 
 function updateFontFamily() {
   const fontSelector = document.getElementById('fontSelector');
@@ -368,8 +425,10 @@ function updateFontFamily() {
 
   // 音声認識サーバへの音声データの供給開始処理が開始した時に呼び出されます。
   function feedDataResumeStarted() {
-    this.recognitionResultText.innerHTML = "音声入力を開始します";
-    this.translationResultText.innerHTML = "翻訳入力を開始します";
+    // this.recognitionResultText.innerHTML = "音声入力を開始します";
+    // this.translationResultText.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    this.recognitionResultText.innerHTML = "";
+    this.translationResultText.innerHTML = "";
 
     // log_(this.name, "EVENT: feedDataResumeStarted()");
   }
@@ -378,9 +437,12 @@ function updateFontFamily() {
   function feedDataResumeEnded() {
     // log_(this.name, "EVENT: feedDataResumeEnded()");
     // ボタンの制御
-    resumePauseButton.innerHTML = "<br><br>音声データの録音中...<br><br><span class=\"supplement\">クリック → 録音の停止</span>";
+    resumePauseButton.innerHTML = "音声データの録音中...<span class=\"supplement\">クリック → 録音の停止</span>";
     resumePauseButton.disabled = false;
     resumePauseButton.classList.add("sending");
+
+    document.querySelector('.recognitionResultText').style.display = 'block';
+    document.querySelector('.translationResultText').style.display = 'block';
   }
 
   // 音声認識サーバへの音声データの供給終了処理が開始した時に呼び出されます。
@@ -391,6 +453,8 @@ function updateFontFamily() {
   // 音声認識サーバへの音声データの供給終了処理が完了した時に呼び出されます。
   function feedDataPauseEnded(reason) {
     // log_(this.name, "EVENT: feedDataPauseEnded(): reason[code[" + reason.code + "] message[" + reason.message + "]]");
+    document.querySelector('.recognitionResultText').style.display = 'none';
+    document.querySelector('.translationResultText').style.display = 'none';
   }
 
   // 発話区間の始端が検出された時に呼び出されます。
