@@ -12,7 +12,7 @@
 <script type="text/javascript" src="wrp.js"></script>
 <script type="text/javascript" src="result.js"></script>
 <style type="text/css">
-table {table-layout: fixed; height: 1px;}
+table {table-layout: fixed; height: 1px; width: 1008px;}
 td {font-size: 14px; border: 1px solid #000;}
 .text {font-size: 14px; font-family: inconsolata, consolas, monospace; width: 100%; height: 21px; margin: 0; padding: 2px; border: none; box-sizing: border-box;}
 .checkbox {margin: 2px; vertical-align: middle;}
@@ -98,6 +98,25 @@ td {font-size: 14px; border: 1px solid #000;}
     /* -webkit-text-stroke: 0px #FFFFFF; */
 }
 
+  font-weight       : bold;
+  font-size         : 26px;
+  font-family       : Zen Maru Gothic;
+  stroke            : #0000FF;
+  fill              : #ffffff;
+  letter-spacing    : 3px;
+  text-anchor       : middle;
+  dominant-baseline : alphabetic;
+}
+.svgSample1 > svg > use:nth-of-type(1) {
+  stroke-width      : 5px;
+  stroke            : #0000FF; /* 青色に設定 */
+  paint-order       : stroke;
+  stroke-linejoin   : round;
+}
+.svgSample1 > svg > use:nth-of-type(2) {
+  stroke-width      : 0;
+}
+
 #version {
   font-size: 10px;
   position: absolute;
@@ -135,16 +154,26 @@ td {font-size: 14px; border: 1px solid #000;}
 </table>
 <table border="0" width="100%" cellspacing="3" cellpadding="0">
   <tr>
-     <td class="recognitionResult" style="background-color: #00FF00; height: 300px; display: flex; flex-direction: column; justify-content: flex-end;">
-       <div style="text-align: center; padding: 0 20px; margin-bottom: -2.5px;"> <!-- 下の余白を少なく設定 -->
-         <span class="recognitionResultText" style="display: none;">認識結果のテキスト</span>
-       </div>
-       <div style="text-align: center; padding: 0 20px; margin-top: -2.5px;"> <!-- 上の余白を少なく設定 -->
-         <span class="translationResultText">翻訳結果のテキスト</span>
-       </div>
-     </td>
+    <td class="recognitionResult" style="background-color: #00FF00; height: 300px; width: 1000px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;">
+      <!-- SVGテキストと認識テキストのコンテナ -->
+      <div class="textContainer" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <!-- 認識結果のテキストをSVGの上に配置 -->
+        <span class="recognitionResultText" style="display: block; width: 95%; box-sizing: border-box; text-align: center; margin-bottom: -100px;">
+        </span>
+        <!-- SVGテキストの表示 -->
+        <div class="svgSample1" id="svgContainer" style="text-align: center; width: 100%; box-sizing: border-box; padding: 0; display: flex; align-items: flex-start; height: 35px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <defs>
+              <text dy="0" id="svgText"></text> <!-- dy="0" でテキストを上に揃える -->
+            </defs>
+            <use x="50%" y="28" xlink:href="#svgText"></use> <!-- y="28"でテキストを調整 -->
+            <use x="50%" y="28" xlink:href="#svgText"></use> <!-- y="28"でテキストを調整 -->
+          </svg>
+        </div>
+      </div>
+    </td>
   </tr>
-<tr class="recognitionResultInfo"></tr>
+  <tr class="recognitionResultInfo"></tr>
 </table>
 
 <div style="margin: 20px 2px 24px 2px;">
@@ -229,52 +258,65 @@ document.getElementById('toggleRecognitionText').addEventListener('click', funct
     }
 });
 
-function updateFontSize(target) {
-  const slider1 = document.getElementById('fontSizeSlider1');
-  const sizeValue1 = document.getElementById('fontSizeValue1');
-  const slider2 = document.getElementById('fontSizeSlider2');
-  const sizeValue2 = document.getElementById('fontSizeValue2');
+function adjustTextPosition() {
+  // SVGのy位置を取得して認識結果テキストの位置を同期
+  const useElement = document.querySelector('.svgSample1 use');
+  const yPosition = useElement.getAttribute('y');
   const recognitionText = document.querySelector('.recognitionResultText');
-  const translationText = document.querySelector('.translationResultText');
 
-  if (target === 1) {
-    sizeValue1.innerText = slider1.value + 'px';
-    recognitionText.style.fontSize = slider1.value + 'px';
-  } else if (target === 2) {
-    sizeValue2.innerText = slider2.value + 'px';
-    translationText.style.fontSize = slider2.value + 'px';
+  // y位置に応じて認識結果テキストのマージンを調整
+  if (yPosition === '90%') {
+    recognitionText.style.marginBottom = '100px'; // SVGが高い場合の位置合わせ
+  } else {
+    recognitionText.style.marginBottom = '75px'; // 改行に応じた調整
   }
 }
 
-  function updateFontColor(target) {
-    const colorPicker1 = document.getElementById('fontColorPicker1');
-    const colorPicker2 = document.getElementById('fontColorPicker2');
-    const recognitionText = document.querySelector('.recognitionResultText');
-    const translationText = document.querySelector('.translationResultText');
+// 初期位置の調整
+adjustTextPosition();
 
-    if (target === 1) {
-      recognitionText.style.color = colorPicker1.value;
-    } else if (target === 2) {
-      translationText.style.color = colorPicker2.value;
+// テキストラップ関数（既存のwrapText）
+function adjustTextPosition() {
+    const useElement = document.querySelector('.svgSample1 use');
+    const yPosition = useElement.getAttribute('y');
+    const recognitionText = document.querySelector('.recognitionResultText');
+
+    // SVGのy位置に基づいて認識結果テキストのマージンを調整
+    if (yPosition === '90%') {
+      recognitionText.style.marginBottom = '10px'; // デフォルトの位置
+    } else {
+      recognitionText.style.marginBottom = '25px'; // 改行時に位置を調整
     }
   }
 
-  function updateFontSize(target) {
-  const slider1 = document.getElementById('fontSizeSlider1');
-  const sizeValue1 = document.getElementById('fontSizeValue1');
-  const slider2 = document.getElementById('fontSizeSlider2');
-  const sizeValue2 = document.getElementById('fontSizeValue2');
-  const recognitionText = document.querySelector('.recognitionResultText');
-  const translationText = document.querySelector('.translationResultText');
+  // テキストラップ関数
+  function wrapText(textElement, text, maxChars) {
+    const words = text.match(new RegExp('.{1,' + maxChars + '}', 'g'));
+    let tspanElements = '';
 
-  if (target === 1) {
-    sizeValue1.innerText = slider1.value + 'px';
-    recognitionText.style.fontSize = slider1.value + 'px';
-  } else if (target === 2) {
-    sizeValue2.innerText = slider2.value + 'px';
-    translationText.style.fontSize = slider2.value + 'px';
+    words.forEach((word, index) => {
+      tspanElements += `<tspan x="0%" dy="${index === 0 ? '0' : '1.2em'}">${word}</tspan>`;
+    });
+
+    textElement.innerHTML = tspanElements;
+
+    const useElements = document.querySelectorAll('use');
+    let baseY = 90;
+    const incrementY = 15;
+
+    if (words.length > 1) {
+      const newY = baseY - (words.length - 1) * incrementY;
+      useElements.forEach(useElement => {
+        // useElement.setAttribute('y', `${newY}%`);
+        svgContainer.style.height = `${35 * words.length}px`; // 高さを改行の数に応じて倍に
+      });
+    } else {
+      useElements.forEach(useElement => {
+        // useElement.setAttribute('y', `${baseY}%`);
+        svgContainer.style.height = '35px'; // 元の高さ
+      });
+    }
   }
-}
 
 //追加ウェイト
 
@@ -284,7 +326,7 @@ function updateFontWeight(target) {
   const slider2 = document.getElementById('fontWeightSlider2');
   const valueDisplay2 = document.getElementById('fontWeightValue2');
   const recognitionText = document.querySelector('.recognitionResultText');
-  const translationText = document.querySelector('.translationResultText');
+  const translationText = document.querySelector('.svgText');
 
   if (target === 1) {
     valueDisplay1.innerText = slider1.value;
@@ -310,7 +352,7 @@ function updateFontStroke(target) {
   const slider2 = document.getElementById('fontStrokeSlider2');
   const strokeValue2 = document.getElementById('fontStrokeValue2');
   const recognitionText = document.querySelector('.recognitionResultText');
-  const translationText = document.querySelector('.translationResultText');
+  const translationText = document.querySelector('.svgText');
 
   if (target === 1) {
     strokeValue1.innerText = slider1.value + 'px';
@@ -325,7 +367,7 @@ function updateFontStrokeColor(target) {
   const colorPicker1 = document.getElementById('fontStrokeColorPicker1');
   const colorPicker2 = document.getElementById('fontStrokeColorPicker2');
   const recognitionText = document.querySelector('.recognitionResultText');
-  const translationText = document.querySelector('.translationResultText');
+  const translationText = document.querySelector('.svgText');
 
   if (target === 1) {
     recognitionText.style.webkitTextStrokeColor = colorPicker1.value;
@@ -347,7 +389,7 @@ function updateTextStroke() {
 function updateFontFamily() {
   const fontSelector = document.getElementById('fontSelector');
   const recognitionText = document.querySelector('.recognitionResultText');
-  const translationText = document.querySelector('.translationResultText');
+  const translationText = document.querySelector('.svgText');
 
   recognitionText.style.fontFamily = fontSelector.value;
   translationText.style.fontFamily = fontSelector.value;
@@ -356,7 +398,7 @@ function updateFontFamily() {
   function updateFontFamily() {
     const fontSelector = document.getElementById('fontSelector');
     const recognitionText = document.querySelector('.recognitionResultText');
-    const translationText = document.querySelector('.translationResultText');
+    const translationText = document.querySelector('.svgText');
 
     recognitionText.style.fontFamily = fontSelector.value;
     translationText.style.fontFamily = fontSelector.value;
@@ -425,11 +467,13 @@ function updateFontFamily() {
 
   // 音声認識サーバへの音声データの供給開始処理が開始した時に呼び出されます。
   function feedDataResumeStarted() {
+    this.recognitionResultText.innerHTML = "";
+    document.querySelector('.recognitionResultText').style.display = 'none';
+    //デバックコード
     // this.recognitionResultText.innerHTML = "音声入力を開始します";
     // this.translationResultText.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    this.recognitionResultText.innerHTML = "";
-    this.translationResultText.innerHTML = "";
-    document.querySelector('.recognitionResultText').style.display = 'none';
+    // const svgText = document.getElementById('svgText');
+    // wrapText(svgText, "There aren't enough of us, so there's only one person today There aren't enough of us, so there's only one person today There aren't enough of us, so there's only one person", 59);
 
     // log_(this.name, "EVENT: feedDataResumeStarted()");
   }
@@ -443,7 +487,11 @@ function updateFontFamily() {
     resumePauseButton.classList.add("sending");
 
     document.querySelector('.recognitionResultText').style.display = 'none';
-    document.querySelector('.translationResultText').style.display = 'block';
+    const recognitionText = document.querySelector('.recognitionResultText');
+    const button = document.getElementById('toggleRecognitionText');
+    recognitionText.style.display = 'none';
+    button.textContent = '日本語字幕をONにする'; // ボタンテキストをONに変更
+    document.querySelector('.svgSample1').style.display = 'block';
   }
 
   // 音声認識サーバへの音声データの供給終了処理が開始した時に呼び出されます。
@@ -454,8 +502,20 @@ function updateFontFamily() {
   // 音声認識サーバへの音声データの供給終了処理が完了した時に呼び出されます。
   function feedDataPauseEnded(reason) {
     // log_(this.name, "EVENT: feedDataPauseEnded(): reason[code[" + reason.code + "] message[" + reason.message + "]]");
-    document.querySelector('.recognitionResultText').style.display = 'none';
-    document.querySelector('.translationResultText').style.display = 'none';
+    const recognitionText = document.querySelector('.recognitionResultText');
+    const svgSample1 = document.querySelector('.svgSample1');
+    if (recognitionText) {
+      recognitionText.style.display = 'none';
+    } else {
+      console.warn('.recognitionResultText element not found.');
+    }
+
+    // svgText の null チェック
+    if (svgText) {
+      svgSample1.style.display = 'none';
+    } else {
+      console.warn('.svgSample1 element not found.');
+    }
   }
 
   // 発話区間の始端が検出された時に呼び出されます。
@@ -503,6 +563,7 @@ function updateFontFamily() {
     // const target = document.getElementById('target').value;
     const googleApiKeyElement = document.getElementById('googleapikey');
     const googleApiKey = googleApiKeyElement.value;
+    const svgText = document.getElementById('svgText');
     console.log("Google API Key: ", googleApiKey);
     const url = googleApiKey +
                 `?text=${encodeURIComponent(text)}&source=${encodeURIComponent('ja')}&target=${encodeURIComponent('en')}`;
@@ -512,7 +573,8 @@ function updateFontFamily() {
         if (data.error) {
           log_(this.name, 'エラー: ' + data.error);
         } else {
-          this.translationResultText.innerHTML = `${data.translatedText}`;
+          // SVGテキストを改行して表示
+          wrapText(svgText, `${data.translatedText}`, 59);
           log_(this.name, `翻訳結果: ${data.translatedText}\n翻訳回数: ${data.translatedCount}`);
         }
       })
@@ -541,7 +603,6 @@ function updateFontFamily() {
   var issueButton = document.getElementById("issueButton");
   var grammarFileNames = document.getElementsByClassName("grammarFileNames");
   var recognitionResultText = document.getElementsByClassName("recognitionResultText");
-  var translationResultText = document.getElementsByClassName("translationResultText");
   var recognitionResultInfo = document.getElementsByClassName("recognitionResultInfo");
 
   // 音声認識ライブラリのプロパティ要素の設定
@@ -563,7 +624,7 @@ function updateFontFamily() {
   Wrp.epiElement = epi;
   Wrp.name = "";
   Wrp.recognitionResultText = recognitionResultText[0];
-  Wrp.translationResultText = translationResultText[0];
+  // Wrp.translationResultText = translationResultText[0];
   Wrp.recognitionResultInfo = recognitionResultInfo[0];
 
   // 音声認識ライブラリのイベントハンドラの設定
