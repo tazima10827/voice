@@ -546,48 +546,65 @@ function updateFontFamily() {
   }
 
   // 認識処理が確定した時に呼び出されます。
+  let translationQueue = [];
   function resultFinalized(result) {
-    // log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
-    result = Result.parse(result);
-    if (!result.text) {
-        log_(this.name, "テキストなしのため処理をスキップ");
-        return;
-    }
-    var text = (result.text) ? sanitize_(result.text) : (result.code != 'o' && result.message) ? "<font color=\"gray\">(" + result.message + ")</font>" : "<font color=\"gray\">...</font>";
-    var duration = result.duration;
-    var elapsedTime = new Date().getTime() - this.startTime;
-    var confidence = result.confidence;
-    var rt = ((duration > 0) ? (elapsedTime / duration).toFixed(2) : "-") + " (" + (elapsedTime / 1000).toFixed(2) + "/" + ((duration > 0) ? (duration / 1000).toFixed(2) : "-") + ")";
-    var cf = (confidence >= 0.0) ? confidence.toFixed(2) : "-";
-    this.recognitionResultText.innerHTML = text;
-    this.recognitionResultInfo.innerHTML = "";
-    log_(this.name, text + " <font color=\"darkgray\">(RT: " + rt + ") (CF: " + cf + ")</font>");
-    //ここで翻訳処理を行い、logで表示する処理を記述する。
-    // const text = document.getElementById('text').value;
-    // const source = document.getElementById('source').value;
-    // const target = document.getElementById('target').value;
-    const googleApiKeyElement = document.getElementById('googleapikey');
-    const googleApiKey = googleApiKeyElement.value;
-    const svgText = document.getElementById('svgText');
-    console.log("Google API Key: ", googleApiKey);
-    const url = googleApiKey +
-                `?text=${encodeURIComponent(text)}&source=${encodeURIComponent('ja')}&target=${encodeURIComponent('en')}`;
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          log_(this.name, 'エラー: ' + data.error);
-        } else {
-          // SVGテキストを改行して表示
-          wrapText(svgText, `${data.translatedText}`, 59);
-          log_(this.name, `翻訳結果: ${data.translatedText}\n翻訳回数: ${data.translatedCount}`);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        log_(this.name, '翻訳にエラーが発生しました。GoogleAPIKEYを確認してください。');
-      });
+      // log_(this.name, "EVENT: resultFinalized(): result[" + result + "]");
+      result = Result.parse(result);
+      if (!result.text) {
+          log_(this.name, "テキストなしのため処理をスキップ");
+          return;
+      }
+      var text = (result.text) ? sanitize_(result.text) : (result.code != 'o' && result.message) ? "<font color=\"gray\">(" + result.message + ")</font>" : "<font color=\"gray\">...</font>";
+      var duration = result.duration;
+      var elapsedTime = new Date().getTime() - this.startTime;
+      var confidence = result.confidence;
+      var rt = ((duration > 0) ? (elapsedTime / duration).toFixed(2) : "-") + " (" + (elapsedTime / 1000).toFixed(2) + "/" + ((duration > 0) ? (duration / 1000).toFixed(2) : "-") + ")";
+      var cf = (confidence >= 0.0) ? confidence.toFixed(2) : "-";
+      this.recognitionResultText.innerHTML = text;
+      this.recognitionResultInfo.innerHTML = "";
+      log_(this.name, text + " <font color=\"darkgray\">(RT: " + rt + ") (CF: " + cf + ")</font>");
 
+      // 翻訳結果を配列に追加し、表示を更新
+      function displayTranslation(text) {
+          // 配列に新しい翻訳結果を追加
+          translationQueue.push(text);
+          // 配列の内容を更新して表示
+          updateTranslationDisplay();
+
+          // 5秒後に配列の先頭の要素を削除して表示を更新
+          setTimeout(() => {
+            translationQueue.shift();
+            updateTranslationDisplay();
+          }, 5000);
+      }
+
+      function updateTranslationDisplay() {
+          const svgText = document.getElementById('svgText');
+          // 配列内のテキストを改行で結合して表示
+          const fullText = translationQueue.join('\n');
+          wrapText(svgText, fullText, 59); // wrapText関数で改行処理
+      }
+
+      const googleApiKeyElement = document.getElementById('googleapikey');
+      const googleApiKey = googleApiKeyElement.value;
+      const svgText = document.getElementById('svgText');
+      console.log("Google API Key: ", googleApiKey);
+      const url = googleApiKey +
+                  `?text=${encodeURIComponent(text)}&source=${encodeURIComponent('ja')}&target=${encodeURIComponent('en')}`;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            log_(this.name, 'エラー: ' + data.error);
+          } else {
+            displayTranslation(data.translatedText);
+            log_(this.name, `翻訳結果: ${data.translatedText}\n翻訳回数: ${data.translatedCount}`);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          log_(this.name, '翻訳にエラーが発生しました。GoogleAPIKEYを確認してください。');
+        });
   }
 
   // 各種イベントが通知された時に呼び出されます。
